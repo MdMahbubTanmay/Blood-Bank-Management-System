@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include<time.h>
-#include <unistd.h>
-#include <windows.h>
+#include <time.h>
 
+#ifdef _WIN32
+#include <windows.h> 
+#else
+#include <unistd.h> 
+#endif
 
 struct LoadData{
+	
 	int totalUser;
 	long int Date[1000];
-
 	char Group[1000][5];
-	
 	char AreaNo[1000][5];
 	char Name[1000][128];
 	char Mobile[1000][15];
@@ -19,13 +21,13 @@ struct LoadData{
 	
 };
 
-//global variables
+
 struct LoadData Ldata;
 int MyPosition = 0;
 
 
 
-//Dummys
+
 void isValidSession();
 void LoadingAnimation(int);
 void ClearScreen();
@@ -50,7 +52,7 @@ long int DateFunction();
 
 
 
-//Main Function
+//*****************************************************************
 
 int main()
 {
@@ -65,7 +67,7 @@ return 0;
 
 
 
-//Login Validation check + Database Creator and Data Loader
+//Login Validation check + Database Ceator and Data Loader
 
 void isValidSession(){
 	FILE *BloodBankData = fopen("blood_data.bin","rb");
@@ -116,7 +118,11 @@ void LoadingAnimation(int mahbub)
 	
 	for(int i= 0;i<mahbub;i++){
 	printf("\rLoading... %c",mahbubLoadingAnim[i%3]);
-	usleep(500000);
+	#ifdef _WIN32
+    Sleep(500);
+    #else
+    usleep(500000);
+    #endif
 	fflush(stdout);
 
 	}
@@ -126,9 +132,9 @@ void LoadingAnimation(int mahbub)
 //Clear Screen
 void ClearScreen(){
 	
-	#ifdef _WIN32:
+	#ifdef _WIN32
 	system("cls");
-	#else:
+	#else
 	system("clear");
 	#endif	
 }
@@ -145,9 +151,9 @@ void MainMenu(){
 		//	ClearInputBuffer();
 			
 	printf("Enter your choice:\n");
-	printf("1.Login\n");
-	printf("2.Register\n");
-	printf("3.Backup/Restore\n");
+	printf("1.Enter\n");
+	//printf("2.Register\n");
+	printf("2.Backup/Restore\n");
 	printf(">");
 	scanf(" %c",&temp);
 	
@@ -156,12 +162,12 @@ void MainMenu(){
 			Login();
 			break;
 		}
-		else if(temp =='2'){
+		/*else if(temp =='2'){
 			ClearScreen();
 			Register();
 			break;
-		}
-		else if(temp =='3'){
+		}*/
+		else if(temp =='2'){
 			ClearScreen();
 			BackupOrRestore();
 			break;
@@ -183,6 +189,7 @@ void Login(){
 	
 	int check=0;
 	ClearInputBuffer();
+	printf("\nLogin with ur number and password. If u are a new user then just give your mobile number and a password to go to registration page");
 	printf("\nEnter Mobile Number:\n");
 	fgets(mobile,sizeof(mobile),stdin);
 	mobile[strcspn(mobile,"\n")]='\0';
@@ -202,7 +209,7 @@ void Login(){
 	}
 	
 	if(check<=0){
-		printf("User Not Found\nRegister First.Go To Register Panel?\n(Y to yes. any other key to exit\n");
+		printf("User Not Found or Incorrect Password\nRegister First.Go To Register Panel?\n(Y to yes. any other key to exit\n");
 		printf(">");
 		char temp;
 		scanf("%c",&temp);
@@ -357,7 +364,11 @@ printf("Total Donor %d\n",Ldata.totalUser);
 	while(1){
 				char temp;
 				ClearScreen();
-				usleep(100000);
+	#ifdef _WIN32
+    Sleep(1000);
+    #else
+    usleep(1000000);
+    #endif
 		//	ClearInputBuffer();
 	printf("Total Donor: %d\n",Ldata.totalUser);		
 	printf("\nEnter your choice:\n");
@@ -393,6 +404,7 @@ printf("Total Donor %d\n",Ldata.totalUser);
 		LoadingAnimation(6);
 		ClearScreen();
 		DisplayDonor(MyPosition);
+		ReturnToUserPanel();
 			break;
 		}
 		else if(temp =='4'){
